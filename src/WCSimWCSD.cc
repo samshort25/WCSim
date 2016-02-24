@@ -79,6 +79,7 @@ G4bool WCSimWCSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   WCSimTrackInformation* trackinfo 
     = (WCSimTrackInformation*)(aStep->GetTrack()->GetUserInformation());
   G4int primParentID;
+  G4int id = aStep->GetTrack()->GetTrackID();
   if (trackinfo)
     primParentID = trackinfo->GetPrimaryParentID();
   else // if there is no trackinfo, then it is a primary particle!
@@ -193,6 +194,8 @@ G4bool WCSimWCSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 	   PMTHitMap[replicaNumber] = hitsCollection->insert( newHit );
 	   (*hitsCollection)[PMTHitMap[replicaNumber]-1]->AddPe(hitTime);
 	   (*hitsCollection)[PMTHitMap[replicaNumber]-1]->AddParentID(primParentID);
+	   (*hitsCollection)[PMTHitMap[replicaNumber]-1]->AddID(id);
+	   
 	   
 	   //     if ( particleDefinition != G4OpticalPhoton::OpticalPhotonDefinition() )
 	   //       newHit->Print();
@@ -200,6 +203,7 @@ G4bool WCSimWCSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
        else {
 	 (*hitsCollection)[PMTHitMap[replicaNumber]-1]->AddPe(hitTime);
 	 (*hitsCollection)[PMTHitMap[replicaNumber]-1]->AddParentID(primParentID);
+	 (*hitsCollection)[PMTHitMap[replicaNumber]-1]->AddID(id);
 	 
        }
      }
