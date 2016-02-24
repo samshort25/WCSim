@@ -759,8 +759,10 @@ void WCSimEventAction::FillRootEvent(G4int event_id,
     int total_hits = WCHC->entries();
     std::vector<float> truetime;
     std::vector<int>   primaryParentID;
+    std::vector<int>   trackid;
     double hit_time, digi_time;
     int hit_parentid;
+    int hit_id;
     //loop over the DigitsCollection
     for(int idigi = 0; idigi < WCDC_hits->entries(); idigi++) {
       int digi_tubeid = (*WCDC_hits)[idigi]->GetTubeID();
@@ -782,16 +784,18 @@ void WCSimEventAction::FillRootEvent(G4int event_id,
 	      if(abs(hit_time - digi_time) < 1E-6) {
 		found_hit = true;
 		hit_parentid = (*WCHC)[idigi]->GetParentID(ih);
+		hit_id = (*WCHC)[idigi]->GetID(ih);
 		break;
 	      }
 	    }//ih
 	    if(found_hit) {
 #ifdef _SAVE_RAW_HITS_VERBOSE
 	      G4cout << "Hit " << id << " in the WCSimWCDigi is a photon hit with time " 
-		     << hit_time << " and parentID " << hit_parentid << G4endl;
+		     << hit_time << " and ID (parentID) " << hit_id <<" ("<< hit_parentid <<")"<< G4endl;
 #endif
 	      truetime.push_back(hit_time);
 	      primaryParentID.push_back(hit_parentid);
+	      trackid.push_back(hit_id);
 	    }
 	    else {
 #ifdef _SAVE_RAW_HITS_VERBOSE
@@ -800,6 +804,7 @@ void WCSimEventAction::FillRootEvent(G4int event_id,
 #endif
 	      truetime.push_back(digi_time);
 	      primaryParentID.push_back(-1);
+	      trackid.push_back(-1);
 	    }
 	  }//id
 	}//digi_tubeid == hit_tubeid
@@ -812,6 +817,7 @@ void WCSimEventAction::FillRootEvent(G4int event_id,
 	    digi_time = (*WCDC_hits)[idigi]->GetTime(id);
 	    truetime.push_back(digi_time);
 	    primaryParentID.push_back(-9);
+	    trackid.push_back(-9);
 	  }//id
 	}//digi_tubeid != hit_tubeid
       }//idigi < total_hits
@@ -823,13 +829,16 @@ void WCSimEventAction::FillRootEvent(G4int event_id,
 	  digi_time = (*WCDC_hits)[idigi]->GetTime(id);
 	  truetime.push_back(digi_time);
 	  primaryParentID.push_back(-1);
+	  trackid.push_back(-1);
 	}//id
       }//idigi >= total_hits
       wcsimrootevent->AddCherenkovHit(digi_tubeid,
 				      truetime,
-				      primaryParentID);
+				      primaryParentID,
+				      trackid);
       truetime.clear();
       primaryParentID.clear();
+      trackid.clear();
     }//idigi
   }//if(WCHC && WCDC_hits)
 #endif //_SAVE_RAW_HITS
