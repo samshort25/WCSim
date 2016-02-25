@@ -201,23 +201,53 @@ void sample_readfile(char *filename=NULL, bool verbose=false)
       {
 	if(verbose) printf("Total pe: %d times( ",peForTube);
 	for (int j = timeArrayIndex; j < timeArrayIndex + peForTube; j++)
-	{
-	  WCSimRootCherenkovHitTime HitTime = 
-	    dynamic_cast<WCSimRootCherenkovHitTime>(timeArray->At(j));
-	  
-	  if(verbose) printf("%6.2f ", HitTime.GetTruetime() );	     
-	}
-	if(verbose) cout << ")" << endl;
-      }
+	  {
+	    WCSimRootCherenkovHitTime HitTime = 
+	      dynamic_cast<WCSimRootCherenkovHitTime>(timeArray->At(j));
+	    
+	    if(verbose) printf("%6.2f ", HitTime.GetTruetime() );	     
+	    if(verbose) cout << ")" << endl;
 
+	    // Want to say which particle created a hit. 
+	    // Issue is, saving the PDG of the hit gives you
+	    // the PDG associated with an optical photon.
+	    // However, currently in WCSim seems like there is no way to
+	    // get the particle that created the photon,
+	    // only the primary particle.
+	    // For example: Muon particle gun.
+	    // If you have a photon from a Michel electron
+	    // currently it only seems easy to say whether a hit came
+	    // from a photon or a muon.
+	    if(verbose){
+	      std::cout<<"Hit created by particle with ID = "<<HitTime.GetID()<<std::endl;
+	      std::cout<<"Hit created by particle with PDG = "<<HitTime.GetPDG()<<std::endl;
+	      if(HitTime.GetID() != -1){
+		int corresponding_pdg = -9999;
+		for(int i=0; i<wcsimrootevent->GetNtrack(); i++){
+		  WCSimRootTrack* track = dynamic_cast<WCSimRootTrack*>((wcsimrootevent->GetTracks())->At(i));
+		  
+		  int curr_pdg = track->GetIpnu();
+		  int curr_id  = track->GetId();
+		  std::cout<<"    - Track "<<i<<": id = "<<curr_id
+			   <<", pdg = "<<curr_pdg<<std::endl;
+		  
+		  if(track->GetId() == HitTime.GetID()){ 
+		    corresponding_pdg = wcsimroottrack->GetIpnu();
+		  } 
+		}
+	      }
+	    }
+	  }
+      }
+      
     } // End of loop over Cherenkov hits
     if(verbose) cout << "Total Pe : " << totalPe << endl;
     
     // Look at digitized hit info
-
+    
     // Get the number of digitized hits
     // Loop over sub events
-   
+    
     if(verbose) cout << "DIGITIZED HITS:" << endl;
     for (int index = 0 ; index < wcsimrootsuperevent->GetNumberOfEvents(); index++) 
     {
