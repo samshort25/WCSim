@@ -107,17 +107,20 @@ private:
   Float_t fTruetime;
   Int_t   fPrimaryParentID;
   Int_t   fID; // TrackID corresponding to the track that created the hit
+  Int_t   fPDG;
 
 public:
   WCSimRootCherenkovHitTime() {}
   WCSimRootCherenkovHitTime(Float_t truetime,
 			    Int_t   primaryParentID,
-			    Int_t   id);
+			    Int_t   id,
+			    Int_t   pdg);
   virtual ~WCSimRootCherenkovHitTime() { }
 
   Float_t   GetTruetime() { return fTruetime;}
   Int_t     GetParentID() { return fPrimaryParentID;}
   Int_t     GetID()       { return fID;}
+  Int_t     GetPDG()       { return fPDG;}
 
   ClassDef(WCSimRootCherenkovHitTime,1)  
 };
@@ -309,7 +312,8 @@ public:
   WCSimRootCherenkovHit   *AddCherenkovHit(Int_t                tubeID,
 					   std::vector<Float_t> truetime,
 					   std::vector<Int_t>   primParID,
-					   std::vector<Int_t>   id);
+					   std::vector<Int_t>   id,
+					   std::vector<Int_t>   pdg);
   TClonesArray        *GetCherenkovHits() const {return fCherenkovHits;}
   TClonesArray        *GetCherenkovHitTimes() const {return fCherenkovHitTimes;}
 

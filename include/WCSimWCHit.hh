@@ -64,6 +64,7 @@ class WCSimWCHit : public G4VHit
   void AddParentID     (G4int primParentID)
   { primaryParentID.push_back(primParentID); }
   void AddID           (G4int trackid){ id.push_back(trackid); }
+  void AddPDG          (G4int hitpdg){ pdg.push_back(hitpdg); }
 
   // This is temporarily used for the drawing scale
   void SetMaxPe(G4int number = 0)  {maxPe   = number;};
@@ -86,6 +87,7 @@ class WCSimWCHit : public G4VHit
   G4float       GetTime(int i)  { return time[i];};
   G4int         GetParentID(int i) { return primaryParentID[i];};
   G4int         GetID(int i)    { return id[i];};
+  G4int         GetPDG(int i)   { return pdg[i];};
   
   G4LogicalVolume* GetLogicalVolume() {return pLogV;};
 
@@ -160,6 +162,7 @@ class WCSimWCHit : public G4VHit
   std::vector<G4float>  time;
   std::vector<G4int>    primaryParentID;
   std::vector<G4int>    id; // track ID
+  std::vector<G4int>    pdg; // hit pdg
   G4int                 totalPeInGate;
 };
 

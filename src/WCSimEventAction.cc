@@ -760,9 +760,11 @@ void WCSimEventAction::FillRootEvent(G4int event_id,
     std::vector<float> truetime;
     std::vector<int>   primaryParentID;
     std::vector<int>   trackid;
+    std::vector<int>   hitpdg;
     double hit_time, digi_time;
     int hit_parentid;
     int hit_id;
+    int hit_pdg;
     //loop over the DigitsCollection
     for(int idigi = 0; idigi < WCDC_hits->entries(); idigi++) {
       int digi_tubeid = (*WCDC_hits)[idigi]->GetTubeID();
@@ -785,6 +787,7 @@ void WCSimEventAction::FillRootEvent(G4int event_id,
 		found_hit = true;
 		hit_parentid = (*WCHC)[idigi]->GetParentID(ih);
 		hit_id = (*WCHC)[idigi]->GetID(ih);
+		hit_pdg = (*WCHC)[idigi]->GetPDG(ih);
 		break;
 	      }
 	    }//ih
@@ -796,6 +799,7 @@ void WCSimEventAction::FillRootEvent(G4int event_id,
 	      truetime.push_back(hit_time);
 	      primaryParentID.push_back(hit_parentid);
 	      trackid.push_back(hit_id);
+	      hitpdg.push_back(hit_pdg);
 	    }
 	    else {
 #ifdef _SAVE_RAW_HITS_VERBOSE
@@ -805,6 +809,7 @@ void WCSimEventAction::FillRootEvent(G4int event_id,
 	      truetime.push_back(digi_time);
 	      primaryParentID.push_back(-1);
 	      trackid.push_back(-1);
+	      hitpdg.push_back(-9999);
 	    }
 	  }//id
 	}//digi_tubeid == hit_tubeid
@@ -818,6 +823,7 @@ void WCSimEventAction::FillRootEvent(G4int event_id,
 	    truetime.push_back(digi_time);
 	    primaryParentID.push_back(-9);
 	    trackid.push_back(-9);
+	    hitpdg.push_back(-9);
 	  }//id
 	}//digi_tubeid != hit_tubeid
       }//idigi < total_hits
@@ -830,15 +836,18 @@ void WCSimEventAction::FillRootEvent(G4int event_id,
 	  truetime.push_back(digi_time);
 	  primaryParentID.push_back(-1);
 	  trackid.push_back(-1);
+	  hitpdg.push_back(-1);
 	}//id
       }//idigi >= total_hits
       wcsimrootevent->AddCherenkovHit(digi_tubeid,
 				      truetime,
 				      primaryParentID,
-				      trackid);
+				      trackid,
+				      hitpdg);
       truetime.clear();
       primaryParentID.clear();
       trackid.clear();
+      hitpdg.clear();
     }//idigi
   }//if(WCHC && WCDC_hits)
 #endif //_SAVE_RAW_HITS

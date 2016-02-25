@@ -79,7 +79,13 @@ G4bool WCSimWCSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   WCSimTrackInformation* trackinfo 
     = (WCSimTrackInformation*)(aStep->GetTrack()->GetUserInformation());
   G4int primParentID;
+
+  // This is the ID and PDG and Name of the optical photon
   G4int id = aStep->GetTrack()->GetTrackID();
+  G4int pdg = aStep->GetTrack()->GetDynamicParticle()->GetPDGcode();
+  G4cout<<"SAMINFO: pdg = "<<pdg<<G4endl;
+  G4cout<<aStep->GetTrack()->GetDefinition()->GetParticleName()<<G4endl;
+
   if (trackinfo)
     primParentID = trackinfo->GetPrimaryParentID();
   else // if there is no trackinfo, then it is a primary particle!
@@ -195,6 +201,7 @@ G4bool WCSimWCSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 	   (*hitsCollection)[PMTHitMap[replicaNumber]-1]->AddPe(hitTime);
 	   (*hitsCollection)[PMTHitMap[replicaNumber]-1]->AddParentID(primParentID);
 	   (*hitsCollection)[PMTHitMap[replicaNumber]-1]->AddID(id);
+	   (*hitsCollection)[PMTHitMap[replicaNumber]-1]->AddPDG(pdg);
 	   
 	   
 	   //     if ( particleDefinition != G4OpticalPhoton::OpticalPhotonDefinition() )
@@ -204,7 +211,7 @@ G4bool WCSimWCSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 	 (*hitsCollection)[PMTHitMap[replicaNumber]-1]->AddPe(hitTime);
 	 (*hitsCollection)[PMTHitMap[replicaNumber]-1]->AddParentID(primParentID);
 	 (*hitsCollection)[PMTHitMap[replicaNumber]-1]->AddID(id);
-	 
+	 (*hitsCollection)[PMTHitMap[replicaNumber]-1]->AddPDG(pdg);
        }
      }
   }
