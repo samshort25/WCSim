@@ -80,12 +80,17 @@ G4bool WCSimWCSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     = (WCSimTrackInformation*)(aStep->GetTrack()->GetUserInformation());
   G4int primParentID;
 
-  // This is the ID and PDG and Name of the optical photon
+  // This is the ID and PDG and Name of the current step 
+  // i.e. it is the optical photon and not the particle creating an optical photon
   G4int id = aStep->GetTrack()->GetTrackID();
   G4int pdg = aStep->GetTrack()->GetDynamicParticle()->GetPDGcode();
+  //G4int pdg = aStep->GetTrack()->GetDefinition()->GetPDGEncoding()
   G4cout<<"SAMINFO: pdg = "<<pdg<<G4endl;
   G4cout<<aStep->GetTrack()->GetDefinition()->GetParticleName()<<G4endl;
 
+  
+  // Note: WCSimTrackInformatio only saves ID if track is:
+  // primary particle or a primary gamma from a pi0 ?
   if (trackinfo)
     primParentID = trackinfo->GetPrimaryParentID();
   else // if there is no trackinfo, then it is a primary particle!
